@@ -1,0 +1,17 @@
+---
+- hosts: default
+  become: true
+  remote_user: ubuntu
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    cts_version: 0.3.0
+    # vault_addr:
+    # ansible_user_password:
+    # ansible_public_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC8rqxon4hRyV5cLNZczuJTe8dsZ33hpWHDU993r4iiY3t9bXqfmIHlIZ7dTL93nlvsgzVdOYMVGMOHMg/a1ZK0VRoKTS5BBhBGJejjDUfWRAtedZbM9JE5HHpks+L+nf8cOM14Os+Q3BV+z4MjYfIK5ZbV0IvUaY0kscQcE8cZoOTC2hHu/MPDneKJxG+HRQJfvqvnWz69/EXyi9iqtmOn0Xy9905qtbPNlDs1c4qF+zZ1qQCkMYP0Z4AVvLaPEJZlPmDnGqz5s1vVb130aXe1A11eq4RwgvZRxXW8i88pKqCGPuLRh7anqvSI15SLpA2KWvu7wD5CvhTisc/6TfVf grant@grantorchard.com
+    # ansible_public_key2: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC8xYZMmdFegfk4NCog1casM50GMQOzunGt1gjO0TNLPI4aJvfwL3BDyEMmvzvkyLKlAxhuQ9nPjYW5X6BK1kihHIBgpz3lweaXJWE0ITJEGjLpniSBvvXsQQA/Dq7wIc/l383aEaiqYDzmUhcndBkCPcHPd7WyGTQJl76Oh+ot0gabQzy/qfXdZNCnAIyCrVV9ZVlZmvEVcPLWq2wtP3y/9m027GVTh01KxaZjVHvT5gvjsniN3ZI908HsSTTwHXykXQQCTIOTfKPVvpr3lSiFomzGKVLQU8bkRz86ICn5UlXUNlzgNQbRA/JBM2W+o8XbzYhyoL+srQ7upPuWkcRrYYNnCk6Ag9fnUXTFAjOJdKZdhrxF2AuM/uEp+M0JwSwsCgilnm5nztZfRf9QHgKuYAvelu4325TtazIPXUiwXAsIKCl0UyWI5YTRu3lO8P3fpG0HyMIG1y0MukTMUEP13kp3sqjif374JIKdThksjEetIYw2H9DU5WEVVXrHXUs= burkey@erebor.local
+  tasks:
+    - name: Install CTS
+      apt:
+        name: consul-terraform-sync='{{ cts_version }}'
+        state: present
+        update_cache: true
