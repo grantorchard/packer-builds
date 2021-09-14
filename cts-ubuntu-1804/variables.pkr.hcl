@@ -1,6 +1,6 @@
 variable "region" {
   type = string
-  default = "ap-southeast-2"
+  default = "us-west-2"
 }
 
 variable "domain" {
