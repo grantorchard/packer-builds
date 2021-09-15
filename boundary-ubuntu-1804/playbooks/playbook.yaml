@@ -1,0 +1,67 @@
+---
+# playbook.yaml
+- name: "Install Boundary"
+  hosts: default
+  remote_user: ubuntu
+  gather_facts: true
+  become: true
+  vars:
+    boundary_version:
+
+  tasks:
+    - name: Add HashiCorp repo key
+      apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+        state: present
+
+    - name: Add HashiCorp repository
+      apt_repository:
+        repo: deb https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main
+        state: present
+
+    - name: Install Boundary
+      apt:
+        name: boundary={{ boundary_version }}
+        state: latest
+
+    - name: Create Boundary Group
+      group:
+        name: boundary
+        state: present
+
+    - name: Create Boundary User
+      user:
+        name: boundary
+        state: present
+        system: yes
+
+    - name: Copy Boundary systemd
+      copy:
+        src: ./boundary.service
+        dest: /etc/systemd/system/boundary.service
+        owner: boundary
+        group: boundary
+        mode: '0664'
+
+    - name: Create Boundary cert directory
+      file:
+        state: directory
+        path: /etc/boundary.d/certs
+        owner: boundary
+        group: boundary
+
+    - name: Change Boundary file permissions
+      file:
+        path: /usr/bin/boundary
+        owner: boundary
+        group: boundary
+
+    - name: Disable boundary Service
+      systemd:
+        name: boundary
+        enabled: no
+
+    - name: Install jq
+      apt:
+        name: jq
+        state: latest
