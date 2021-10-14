@@ -1,0 +1,85 @@
+---
+# playbook.yaml
+- name: "Install Agents"
+  hosts: default
+  remote_user: ubuntu
+  gather_facts: true
+  become: true
+  vars:
+    consul_version:
+    consul_config:
+    consul_ca:
+    consul_license:
+
+  tasks:
+    - name: Add HashiCorp repo key
+      apt_key:
+        url: https://apt.releases.hashicorp.com/gpg
+        state: present
+
+    - name: Add HashiCorp repository
+      apt_repository:
+        repo: deb https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main
+        state: present
+
+    - name: Install Consul
+      apt:
+        name: consul={{ consul_version }}
+        state: present
+
+    - name: Remove default Consul config
+      file:
+        state: absent
+        path: /etc/consul.d/consul.hcl
+
+    - name: Add HCP Consul config
+      copy:
+        dest: /etc/consul.d/config.json
+        owner: consul
+        group: consul
+        content: "{{ consul_config | b64decode }}"
+
+    - name: Create Consul cert directory
+      file:
+        state: directory
+        path: /etc/consul.d/certs
+        owner: consul
+        group: consul
+
+    - name: Copy Consul CA
+      copy:
+        dest: /etc/consul.d/certs/ca.cer
+        owner: consul
+        group: consul
+        content: "{{ consul_ca | b64decode }}"
+
+    - name: Update path to ca
+      lineinfile:
+        path: /etc/selinux/config
+        regexp: '^"ca_file"'
+        line: '"ca_file": "/etc/consul.d/certs/ca.pem",'
+
+    - name: Update systemd condition
+      lineinfile:
+        path: /usr/lib/systemd/system/consul.service
+        regexp: '^ConditionFileNotEmpty'
+        line: 'ConditionFileNotEmpty=/etc/consul.d/config.json'
+
+
+    - name: Add Consul license file
+      copy:
+        dest: /etc/consul.d/consul.hclic
+        owner: consul
+        group: consul
+        content: "{{ consul_license }}"
+
+    - name: Install jq
+      apt:
+        name: jq
+        state: latest
+
+    - name: Disable daily update
+      systemd:
+        name: apt-daily-upgrade
+        state: stopped
+        enabled: no
