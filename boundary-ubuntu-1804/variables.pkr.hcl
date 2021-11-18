@@ -13,8 +13,7 @@ variable "tags" {
 }
 
 variable "boundary_version" {
-  type = number
-  default = 0.6.2
+  type = string
 }
 
 
