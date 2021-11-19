@@ -1,8 +1,8 @@
 build {
   sources = [
 		# "vsphere-iso.ubuntu-1804",
-		#"amazon-ebs.ubuntu-1804-base",
-		"amazon-ebs.ubuntu-1804-arm-base"
+		"amazon-ebs.ubuntu-1804-base",
+		#"amazon-ebs.ubuntu-1804-arm-base"
   ]
 	hcp_packer_registry {
 		bucket_name = "base-ubuntu-1804"
@@ -16,10 +16,7 @@ build {
 		user = "ubuntu"
 		extra_arguments = [
 			"--extra-vars",
-			#"consul_version=${var.consul_version}",
-			"consul_config=${var.consul_config}",
-			"consul_ca=${var.consul_ca}",
-			"consul_license=${var.consul_license}"
+			"consul_config=${var.consul_config} consul_ca=${var.consul_ca} consul_license=${var.consul_license}"
 		]
   }
 }
