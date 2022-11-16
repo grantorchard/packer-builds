@@ -1,0 +1,23 @@
+---
+- name: Install Vault
+  become: true
+  apt:
+    name: vault={{ version }}
+    state: present
+    update_cache: yes
+  when: version is defined
+
+# - name: Install Vault
+#   become: true
+#   apt:
+#     name: vault
+#     state: latest
+#     update_cache: yes
+#   when: version is undefined
+
+- name: Add Enterprise binary
+  get_url:
+    url: https://releases.hashicorp.com/
+    dest: /usr/bin/vault
+    mode: 644
+  become: true
